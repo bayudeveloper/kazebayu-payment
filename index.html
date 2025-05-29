@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="triangle triangle-1"></div>
+    <div class="triangle triangle-2"></div>
+
+    <div class="container">
+        <!-- Login Form -->
+        <div class="login-container" id="loginContainer">
+            <h1>Login Pembayaran</h1>
+            <div class="form-group">
+                <label for="name">Nama Anda</label>
+                <input type="text" id="name" placeholder="Masukkan nama Anda">
+                <label for="nope">Nomor Telepon</label>
+                <input type="text" id="nope" placeholder="Masukkan nomor telepon Anda">
+            </div>
+            <button class="btn" id="loginBtn">Masuk</button>
+        </div>
+      
+        <!-- Payment Methods -->
+        <div class="payment-container" id="paymentContainer">
+            <div class="user-greeting">
+                <h2>Halo, <span id="userName"></span>!</h2>
+                <p>Silakan pilih metode pembayaran Anda</p>
+            </div>
+
+            <div class="payment-methods">
+                <div class="payment-method" data-method="dana">
+                    <i class="fas fa-wallet"></i>
+                    <h3>DANA</h3>
+                    <p>Transfer via DANA</p>
+                </div>
+                <div class="payment-method" data-method="qris">
+                    <i class="fas fa-qrcode"></i>
+                    <h3>QRIS</h3>
+                    <p>Scan QR Code</p>
+                </div>
+            </div>
+
+            <!-- DANA Payment Details -->
+            <div class="payment-details" id="danaDetails">
+                <div class="qr-code">
+                    <i class="fas fa-wallet" style="font-size: 60px; color: #6c5ce7;"></i>
+                    <h3>Transfer via DANA</h3>
+                    <p>Nomor DANA: <strong>62895406178006</strong></p>
+                </div>
+                <div class="note">
+                    <strong>Penting:</strong> Setelah melakukan transfer, harap kirim bukti transfer ke WhatsApp Admin.
+                </div>
+            </div>
+
+            <!-- QRIS Payment Details -->
+            <div class="payment-details" id="qrisDetails">
+                <div class="qr-code">
+                    <img src="https://ar-hosting.pages.dev/1748353077513.jpg" alt="QRIS Payment">
+                    <h3>Scan QR Code di atas</h3>
+                </div>
+                <div class="note">
+                    <strong>WAJIB:</strong> Setelah melakukan pembayaran, harap kirim bukti transfer ke WhatsApp Admin.
+                </div>
+            </div>
+
+            <!-- Contact Buttons -->
+            <div class="contact-buttons">
+                <a href="https://wa.me/6288291218439" class="contact-btn whatsapp" target="_blank">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </a>
+                <a href="https://wa.me/62895406178006" class="contact-btn whatsapp-business" target="_blank">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Business
+                </a>
+                <a href="https://t.me/altheric" class="contact-btn telegram" target="_blank">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+                <a href="https://whatsapp.com/channel/0029Vb5ozMVK5cDIvhVl5p3Z" class="contact-btn channel" target="_blank">
+                    <i class="fab fa-whatsapp"></i> Channel
+                </a>
+            </div>
+
+            <button class="btn back-btn" id="backBtn">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
